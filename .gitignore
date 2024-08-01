@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 .husky
+.eslintcache
+.env.local
 
 # Editor directories and files
 .vscode/*
