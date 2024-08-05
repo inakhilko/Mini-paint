@@ -1,0 +1,31 @@
+.paint-page {
+  display: flex;
+background-color: whitesmoke;
+  min-height: 100vh;
+
+  &__menu {
+    display: flex;
+    flex-direction: column;
+    //gap: 20px;
+    //width: 30%;
+    //padding: 20px;
+    //border: #cccccc 2px solid;
+    border-radius: 10px;
+    background-color: #fdfdfd;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-grow: 1;
+  }
+
+  &__canvas {
+    width: 400px;
+    height: 280px;
+    border: #cccccc 2px solid;
+    background-color: #fdfdfd;
+  }
+}

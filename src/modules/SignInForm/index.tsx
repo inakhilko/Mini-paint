@@ -15,6 +15,14 @@ function SignInForm() {
         dispatch(
           setUser({ email: user.email, token: user.accessToken, id: user.uid })
         );
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            email: user.email,
+            token: user.accessToken,
+            id: user.uid,
+          })
+        );
       })
       .catch(console.error);
   };

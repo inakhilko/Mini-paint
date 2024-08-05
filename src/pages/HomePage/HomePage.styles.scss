@@ -1,0 +1,31 @@
+.home-page {
+  display: flex;
+    flex-direction: column;
+  gap: 20px;
+
+  &__navigation {
+    width: 30%;
+    padding: 20px;
+
+    border: #cccccc 2px solid;
+    border-radius: 10px;
+
+    background-color: #fdfdfd;
+  }
+
+  &__content {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1;
+
+    &-main {
+      width: 70%;
+      background-color: #fdfdfd;
+
+      border: #cccccc 2px solid;
+      border-radius: 10px;
+    }
+  }
+
+
+}
