@@ -11,8 +11,12 @@
   transition:
     background-color 0.3s,
     color 0.3s,
-    border-color 0.3s,
-;
+    border-color 0.3s;
+
+  & svg {
+    height: 25px;
+    width: 25px;
+  }
 
   &--filled {
     color: #fff;

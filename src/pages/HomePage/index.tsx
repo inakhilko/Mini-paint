@@ -1,8 +1,11 @@
 import Header from '../../modules/Header';
 import Navigation from '../../modules/Navigation';
 import './HomePage.styles.scss';
+// import firebase from 'firebase/compat';
+// import firestore = firebase.firestore;
 
 function HomePage() {
+  // const [images, loading] = useCollectionData(firestore);
   return (
     <div className={'home-page'}>
       <Header />
