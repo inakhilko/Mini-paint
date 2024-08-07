@@ -1,7 +1,8 @@
 .home-page {
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
   gap: 20px;
+  height: 100vh;
 
   &__navigation {
     width: 30%;
@@ -17,13 +18,30 @@
     display: flex;
     gap: 20px;
     flex-grow: 1;
+    overflow: hidden;
 
     &-main {
       width: 70%;
-      background-color: #fdfdfd;
+      padding: 7px;
+
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 7px;
 
       border: #cccccc 2px solid;
       border-radius: 10px;
+
+      background-color: #fdfdfd;
+      overflow-y: scroll;
+
+      &__image {
+        width: calc((100% - 14px) / 3);
+        object-fit: cover;
+
+        border: #cccccc 2px solid;
+        border-radius: 10px;
+      }
     }
   }
 

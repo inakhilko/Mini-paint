@@ -1,13 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ToolbarMenu from '../../components/ToolbarMenu';
 import shapes from './constants/shapesData.tsx';
 import Button from '../../UI/Button';
 import './PaintPage.styles.scss';
+import { getDatabase, onValue, ref, set } from 'firebase/database';
+import { app } from '../../firebase.ts';
+import { useSelector } from 'react-redux';
 
 // type tool = 'brush' | 'rectangle' | 'circle' | 'eraser';
 
 function PaintPage() {
+  const { imageId } = useParams();
+  const database = getDatabase(app);
+  const userId = useSelector((state) => state.user.id);
+
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
 
@@ -19,10 +26,19 @@ function PaintPage() {
 
   useEffect(() => {
     const canvas: HTMLCanvasElement | null = canvasRef.current;
-    canvas.width = 762;
-    canvas.height = 450;
+    canvas.width = 500;
+    canvas.height = 500;
 
     const ctx = canvas.getContext?.('2d');
+
+    if (imageId) {
+      onValue(ref(database, userId + '/pictures/' + imageId), (snapshot) => {
+        const data = snapshot.val();
+        const img = new Image();
+        img.src = data.imageUrl;
+        ctx.drawImage(img, 0, 0);
+      });
+    }
     ctx.lineCap = 'round';
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
@@ -127,7 +143,21 @@ function PaintPage() {
     setTool(e.currentTarget.id);
   };
 
-  // const saveImg = () => {};
+  const saveImg = (imageId) => {
+    const imageUrl = canvasRef.current.toDataURL('image/png');
+    if (imageId) {
+      set(ref(database, userId + '/pictures/' + imageId), {
+        imageUrl: canvasRef.current.toDataURL('image/png'),
+        imageId,
+      });
+    } else {
+      const newImageId = Date.now();
+      set(ref(database, userId + '/pictures' + `/${newImageId}`), {
+        imageUrl,
+        imageId: newImageId,
+      });
+    }
+  };
 
   return (
     <div className={'paint-page'}>
@@ -144,7 +174,7 @@ function PaintPage() {
           </Link>
         </Button>
 
-        <Button variant={'outlined'}>
+        <Button variant={'outlined'} onClick={() => saveImg(imageId)}>
           <svg
             id="save"
             width="800px"

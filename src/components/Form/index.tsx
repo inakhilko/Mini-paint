@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import './Form.styles.scss';
 import Button from '../../UI/Button';
 
-function Form({ title, handleClick }: { title: string }) {
+const Form = memo(({ title, handleClick }: { title: string }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -31,6 +31,6 @@ function Form({ title, handleClick }: { title: string }) {
       </Button>
     </div>
   );
-}
+});
 
 export default Form;
