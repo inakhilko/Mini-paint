@@ -21,14 +21,14 @@ function SignInForm() {
               id: user.uid,
             })
           );
-          localStorage.setItem(
-            'paintUser',
-            JSON.stringify({
-              email: user.email,
-              token: user.accessToken,
-              id: user.uid,
-            })
-          );
+          // localStorage.setItem(
+          //   'paintUser',
+          //   JSON.stringify({
+          //     email: user.email,
+          //     token: user.accessToken,
+          //     id: user.uid,
+          //   })
+          // );
         })
         .catch(console.error);
     },
