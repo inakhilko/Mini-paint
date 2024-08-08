@@ -6,33 +6,13 @@ import * as fbAuth from 'firebase/auth';
 
 function Header() {
   const dispatch = useDispatch();
+  const { getAuth } = fbAuth;
+  const auth = getAuth();
   const onLogoutClick = () => {
     dispatch(removeUser());
     localStorage.removeItem('paintUser');
     auth.signOut();
   };
-  const { getAuth } = fbAuth;
-  const auth = getAuth();
-  //
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       // User is signed in, see docs for a list of available properties
-  //       // https://firebase.google.com/docs/reference/js/auth.user
-  //       const uid = user.uid;
-  //       // dispatch(setUser)
-  //       // const user = localStorage.getItem('paintUser');
-  //       // if (user) {
-  //       //   dispatch(setUser(JSON.parse(user)));
-  //       // }
-  //       console.log('user', user);
-  //     } else {
-  //       // User is signed out
-  //       // ...
-  //       console.log('user is logged out', user);
-  //     }
-  //   });
-  // }, []);
 
   return (
     <header className={'header'}>

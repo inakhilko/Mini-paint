@@ -5,6 +5,8 @@ import { setUser } from '../../store/slices/UserSlice.ts';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../store/hooks/useAuth.ts';
 import { useCallback, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function SignInForm() {
   const dispatch = useDispatch();
   const handleLogIn = useCallback(
@@ -21,16 +23,17 @@ function SignInForm() {
               id: user.uid,
             })
           );
-          // localStorage.setItem(
-          //   'paintUser',
-          //   JSON.stringify({
-          //     email: user.email,
-          //     token: user.accessToken,
-          //     id: user.uid,
-          //   })
-          // );
         })
-        .catch(console.error);
+        .catch((error) => {
+          switch (error.code) {
+            case 'auth/invalid-credential':
+              toast.error('Invalid email or password');
+              break;
+            default:
+              toast.error('Authentication error');
+              break;
+          }
+        });
     },
     [dispatch]
   );
@@ -39,14 +42,17 @@ function SignInForm() {
 
   useEffect(() => {}, []);
   return (
-    <div className={'public-form'}>
-      <h2 className={'public-form__title'}>Sign In</h2>
-      <Form title={'Log In'} handleClick={handleLogIn} />
-      <span className={'public-form__additional-info'}>
-        If you do not have an account <Link to={'/register'}>sign up</Link>
-      </span>
-      {isAuth && <Navigate to={'/home'} replace={true} />}
-    </div>
+    <>
+      <div className={'public-form'}>
+        <h2 className={'public-form__title'}>Sign In</h2>
+        <Form title={'Log In'} handleClick={handleLogIn} />
+        <span className={'public-form__additional-info'}>
+          If you do not have an account <Link to={'/register'}>sign up</Link>
+        </span>
+        {isAuth && <Navigate to={'/home'} replace={true} />}
+      </div>
+      <ToastContainer></ToastContainer>
+    </>
   );
 }
 
