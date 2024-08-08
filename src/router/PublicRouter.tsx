@@ -5,7 +5,6 @@ import SignUpPage from '../pages/SignUpPage';
 function PublicRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={'/login'} />} />
       <Route path="/login" element={<SignInPage />} />
       <Route path="/register" element={<SignUpPage />} />
       <Route path="*" element={<Navigate to="/login" />} />

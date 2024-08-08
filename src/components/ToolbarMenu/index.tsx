@@ -1,7 +1,6 @@
 import { ComponentProps, useRef } from 'react';
 
 interface ToolbarMenuProps extends ComponentProps<'div'> {
-  // onMenuExitClick: EventHandler<'click'>;
   title: string;
 }
 function ToolbarMenu(props: ToolbarMenuProps) {
@@ -12,8 +11,6 @@ function ToolbarMenu(props: ToolbarMenuProps) {
     if (!e.target.contains(exitRef.current)) {
       e.target.closest('.menu').classList.remove('menu--opened');
     }
-
-    console.log('clicked');
   };
   return (
     <div className={'menu'} id={id}>

@@ -6,6 +6,6 @@ export function useAuth() {
     isAuth: !!email,
     email,
     token,
-    id,
+    userId: id,
   };
 }

@@ -1,4 +1,12 @@
 .navigation {
+  width: 30%;
+  padding: 20px;
+
+  border: #cccccc 2px solid;
+  border-radius: 10px;
+
+  background-color: #fdfdfd;
+
   &__list {
     display: flex;
     flex-direction: column;

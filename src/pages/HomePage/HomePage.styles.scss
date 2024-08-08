@@ -4,16 +4,6 @@
   gap: 20px;
   height: 100vh;
 
-  &__navigation {
-    width: 30%;
-    padding: 20px;
-
-    border: #cccccc 2px solid;
-    border-radius: 10px;
-
-    background-color: #fdfdfd;
-  }
-
   &__content {
     display: flex;
     gap: 20px;
@@ -41,9 +31,9 @@
 
         border: #cccccc 2px solid;
         border-radius: 10px;
+
+        cursor: pointer;
       }
     }
   }
-
-
 }

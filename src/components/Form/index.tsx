@@ -2,7 +2,12 @@ import { memo, useState } from 'react';
 import './Form.styles.scss';
 import Button from '../../UI/Button';
 
-const Form = memo(({ title, handleClick }: { title: string }) => {
+interface FormProps {
+  title: string;
+  handleClick: (email: string, password: string) => void;
+}
+
+const Form = memo(({ title, handleClick }: FormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

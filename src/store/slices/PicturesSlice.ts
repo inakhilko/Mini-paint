@@ -15,15 +15,12 @@ const picturesSlice = createSlice<PicturesStore>({
   name: 'pictures',
   initialState,
   reducers: {
-    addPicture: (state: PicturesStore, action) => {
-      state.pictures = [...state.pictures, action.payload];
-    },
     getPictures: (state: PicturesStore, action) => {
       state.pictures = action.payload;
     },
   },
 });
 
-export const { addPicture, getPictures } = picturesSlice.actions;
+export const { getPictures } = picturesSlice.actions;
 
 export default picturesSlice.reducer;

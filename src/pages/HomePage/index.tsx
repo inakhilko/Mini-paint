@@ -6,13 +6,14 @@ import { getPictures } from '../../store/slices/PicturesSlice.ts';
 import Header from '../../modules/Header';
 import Navigation from '../../modules/Navigation';
 import './HomePage.styles.scss';
+import { useAuth } from '../../store/hooks/useAuth.ts';
 
 function HomePage() {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const userId = useSelector((state) => state.user.id);
+  const { userId } = useAuth();
 
   const db = getDatabase();
   const images = ref(db, userId + '/pictures');
@@ -37,7 +38,7 @@ function HomePage() {
     <div className={'home-page'}>
       <Header />
       <div className={'home-page__content'}>
-        <Navigation className={'home-page__navigation'} />
+        <Navigation />
         <div className={'home-page__content-main'}>
           {imagesArrCopy.map(({ imageUrl, imageId }) => {
             return (

@@ -1,20 +1,17 @@
 import { Link } from 'react-router-dom';
 import './Navigation.styles.scss';
 import Button from '../../UI/Button';
+import { navigationLinks } from './constants/navigationLinks.ts';
 
-function Navigation({ className }) {
-  const navigationLinks = [
-    { link: '/', linkTitle: 'Images' },
-    { link: '/paint', linkTitle: 'Create new' },
-  ];
+function Navigation() {
   return (
-    <nav className={`navigation ${className}`}>
+    <nav className={'navigation'}>
       <ul className={'navigation__list'}>
         {navigationLinks.map(({ link, linkTitle }) => (
           <li className={'navigation__list-item'} key={linkTitle}>
-            <Button variant={'outlined'}>
-              <Link to={link}>{linkTitle}</Link>
-            </Button>
+            <Link to={link}>
+              <Button variant={'outlined'}>{linkTitle}</Button>
+            </Link>
           </li>
         ))}
       </ul>

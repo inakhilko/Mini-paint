@@ -7,7 +7,6 @@ function PrivateRouter() {
     <Routes>
       <Route path={'home'} element={<HomePage />} />
       <Route path={'paint'} element={<PaintPage />}>
-        <Route path={'new'} element={<PaintPage />} />
         <Route path={':imageId'} element={<PaintPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/home" />} />
