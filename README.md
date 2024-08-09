@@ -50,14 +50,8 @@ VITE_FIREBASE_DATABASE_URL=your_database_url
 
 The structure of the Firebase Realtime Database for the Mini-Paint application is organized as follows:
 * Root
-  * users
-    * userId
-    * email: User's email address
-    * name: User's name
-  * pictures
-    * userId
+  * userId
+    * pictures
       * pictureId
         * imageUrl: URL of the image
         * imageId: Unique identifier for the image
-        * createdAt: Timestamp of when the image was created
-        * updatedAt: Timestamp of when the image was last updated
