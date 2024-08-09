@@ -1,7 +1,3 @@
-export const clearCanvas = (canvas: CanvasRenderingContext2D): void => {
-  canvas.clearRect(0, 0, 762, 450);
-};
-
 export const drawWithBrush = (e, canvasContext) => {
   canvasContext.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   canvasContext.stroke();

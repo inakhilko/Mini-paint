@@ -6,36 +6,44 @@ import 'react-toastify/dist/ReactToastify.css';
 import { auth } from '../../firebase.ts';
 import { setUser } from '../../store/slices/UserSlice.ts';
 import Form from '../../components/Form';
+import { useCallback } from 'react';
 
 const { createUserWithEmailAndPassword } = fbAuth;
 
 function SignUpForm() {
   const dispatch = useDispatch();
-  const handleRegister = (email, password) => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        dispatch(
-          setUser({ email: user.email, token: user.accessToken, id: user.uid })
-        );
-      })
-      .catch((error) => {
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            toast.error('Email already in use');
-            break;
-          case 'auth/weak-password':
-            toast.error('Password is too weak');
-            break;
-          case 'auth/invalid-email':
-            toast.error('Invalid email');
-            break;
-          default:
-            toast.error('Registration error');
-            break;
-        }
-      });
-  };
+  const handleRegister = useCallback(
+    (email, password) => {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          dispatch(
+            setUser({
+              email: user.email,
+              token: user.accessToken,
+              id: user.uid,
+            })
+          );
+        })
+        .catch((error) => {
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              toast.error('Email already in use');
+              break;
+            case 'auth/weak-password':
+              toast.error('Password is too weak');
+              break;
+            case 'auth/invalid-email':
+              toast.error('Invalid email');
+              break;
+            default:
+              toast.error('Registration error');
+              break;
+          }
+        });
+    },
+    [dispatch]
+  );
 
   return (
     <>

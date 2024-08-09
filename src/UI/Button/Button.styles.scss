@@ -30,6 +30,12 @@
       background-color: #fff;
     }
 
+    &:active {
+      color: #358d12;
+      border: 2px solid currentColor;
+      background-color: #fff;
+    }
+
     & svg path {
       fill: currentColor;
     }
@@ -43,6 +49,11 @@
     &:hover {
       color: #45b017;
       border-color: #45b017;
+    }
+
+    &:active {
+      color: #358d12;
+      border-color: #358d12;
     }
 
     & svg path {
