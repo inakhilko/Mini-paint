@@ -4,8 +4,8 @@ import ToolbarMenu from '../../components/ToolbarMenu';
 import shapes from './constants/shapesData.tsx';
 import Button from '../../UI/Button';
 import './PaintPage.styles.scss';
-import { getDatabase, onValue, ref, set } from 'firebase/database';
-import { app } from '../../firebase.ts';
+import { onValue, ref, set } from 'firebase/database';
+import { database } from '../../firebase.ts';
 import { toolbarButtons } from './constants/toolbarButtonsData.tsx';
 import {
   drawCircle,
@@ -17,8 +17,8 @@ import { useAuth } from '../../store/hooks/useAuth.ts';
 
 function PaintPage() {
   const { imageId } = useParams();
-  const database = getDatabase(app);
   const { userId } = useAuth();
+
   const navigate = useNavigate();
 
   const canvasRef = useRef(null);

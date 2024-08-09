@@ -1,20 +1,20 @@
-import Form from '../../components/Form';
+import { useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import * as fbAuth from 'firebase/auth';
-import { setUser } from '../../store/slices/UserSlice.ts';
-import { Link } from 'react-router-dom';
-import { useCallback } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { auth } from '../../firebase.ts';
+import { setUser } from '../../store/slices/UserSlice.ts';
+import Form from '../../components/Form';
 
-const { getAuth, signInWithEmailAndPassword } = fbAuth;
+const { signInWithEmailAndPassword } = fbAuth;
 
 function SignInForm() {
   const dispatch = useDispatch();
 
   const handleLogIn = useCallback(
     (email, password) => {
-      const auth = getAuth();
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;

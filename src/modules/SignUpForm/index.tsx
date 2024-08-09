@@ -1,16 +1,17 @@
-import Form from '../../components/Form';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../store/slices/UserSlice.ts';
-import * as fbAuth from 'firebase/auth';
 import { Link } from 'react-router-dom';
+import * as fbAuth from 'firebase/auth';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { auth } from '../../firebase.ts';
+import { setUser } from '../../store/slices/UserSlice.ts';
+import Form from '../../components/Form';
 
-const { getAuth, createUserWithEmailAndPassword } = fbAuth;
+const { createUserWithEmailAndPassword } = fbAuth;
 
 function SignUpForm() {
   const dispatch = useDispatch();
   const handleRegister = (email, password) => {
-    const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
