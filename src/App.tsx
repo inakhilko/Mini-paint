@@ -26,15 +26,14 @@ function App() {
       }
       setLoading(false);
     });
-
-    return () => unsubscribe();
+    return unsubscribe;
   }, [auth, dispatch, onAuthStateChanged]);
 
   if (loading) {
     return <Loader />;
   }
 
-  return <>{isAuth ? <PrivateRouter /> : <PublicRouter />}</>;
+  return isAuth ? <PrivateRouter /> : <PublicRouter />;
 }
 
 export default App;

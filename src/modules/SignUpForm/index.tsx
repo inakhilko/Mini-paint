@@ -2,14 +2,14 @@ import Form from '../../components/Form';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/UserSlice.ts';
 import * as fbAuth from 'firebase/auth';
-import { Link, Navigate } from 'react-router-dom';
-import { useAuth } from '../../store/hooks/useAuth.ts';
+import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+
+const { getAuth, createUserWithEmailAndPassword } = fbAuth;
 
 function SignUpForm() {
   const dispatch = useDispatch();
   const handleRegister = (email, password) => {
-    const { getAuth, createUserWithEmailAndPassword } = fbAuth;
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -35,7 +35,6 @@ function SignUpForm() {
         }
       });
   };
-  const { isAuth } = useAuth();
 
   return (
     <>
@@ -45,9 +44,8 @@ function SignUpForm() {
         <span className={'public-form__additional-info'}>
           If you already have an account <Link to={'/login'}>sign in</Link>
         </span>
-        {isAuth && <Navigate to={'/home'} replace={true} />}
       </div>
-      <ToastContainer></ToastContainer>
+      <ToastContainer />
     </>
   );
 }

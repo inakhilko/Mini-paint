@@ -30,36 +30,6 @@ function PaintPage() {
 
   const [tool, setTool] = useState('brush');
 
-  useEffect(() => {
-    const canvas: HTMLCanvasElement | null = canvasRef.current;
-    canvas.width = 500;
-    canvas.height = 500;
-
-    const ctx = canvas.getContext?.('2d');
-
-    if (imageId) {
-      onValue(ref(database, userId + '/pictures/' + imageId), (snapshot) => {
-        const data = snapshot.val();
-        const img = new Image();
-        img.src = data.imageUrl;
-        ctx.drawImage(img, 0, 0);
-      });
-    } else {
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = lineWidth;
-
-    ctxRef.current = ctx;
-  }, []);
-
-  useEffect(() => {
-    ctxRef.current.strokeStyle = lineColor;
-    ctxRef.current.lineWidth = lineWidth;
-  }, [lineColor, lineWidth]);
-
   const startDrawing = (e) => {
     ctxRef.current.prevMouseX = e.nativeEvent.offsetX;
     ctxRef.current.prevMouseY = e.nativeEvent.offsetY;
@@ -162,6 +132,36 @@ function PaintPage() {
         break;
     }
   };
+
+  useEffect(() => {
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
+    canvas.width = 500;
+    canvas.height = 500;
+
+    const ctx = canvas.getContext?.('2d');
+
+    if (imageId) {
+      onValue(ref(database, userId + '/pictures/' + imageId), (snapshot) => {
+        const data = snapshot.val();
+        const img = new Image();
+        img.src = data.imageUrl;
+        ctx.drawImage(img, 0, 0);
+      });
+    } else {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = lineWidth;
+
+    ctxRef.current = ctx;
+  }, [imageId, canvasRef]);
+
+  useEffect(() => {
+    ctxRef.current.strokeStyle = lineColor;
+    ctxRef.current.lineWidth = lineWidth;
+  }, [lineColor, lineWidth]);
 
   return (
     <div className={'paint-page'}>
