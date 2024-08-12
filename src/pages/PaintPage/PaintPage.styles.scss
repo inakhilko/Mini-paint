@@ -36,11 +36,32 @@
 
     flex-grow: 1;
   }
+}
+
+.drawing-form {
+  display: flex;
+  flex-direction: column;
 
   &__canvas {
+    margin-bottom: 15px;
     border: #cccccc 2px solid;
     background-color: #fdfdfd;
   }
+
+  &__input {
+    width: 100%;
+    padding: 10px;
+
+    margin-bottom: 6px;
+    border: none;
+    border-radius: 15px;
+  }
+
+  .title-error {
+    padding-left: 10px;
+    color: red;
+    font-size: 0.75rem;
+   }
 }
 
 .menu {

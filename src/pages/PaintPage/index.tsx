@@ -1,6 +1,6 @@
 import { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { onValue, ref } from 'firebase/database';
+import { onValue, ref, set } from 'firebase/database';
 import { database } from '../../firebase.ts';
 import DrawingToolsContext from '../../context/DrawingToolsContext.ts';
 import { useAuth } from '../../store/hooks/useAuth.ts';
@@ -15,10 +15,10 @@ import {
   clearCanvas,
   onHomeButtonClick,
   openToolMenu,
-  saveImg,
 } from './helpers/toolbarHelpers.ts';
 
 import Toolbar from '../../modules/Toolbar';
+import { useForm } from 'react-hook-form';
 
 interface ExtendedCanvasRenderingContext2D extends CanvasRenderingContext2D {
   prevMouseX?: number;
@@ -41,6 +41,13 @@ function PaintPage() {
 
   const [isDrawing, setIsDrawing] = useState(false);
 
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    setValue,
+  } = useForm();
+
   const startDrawing = (e) => {
     const canvasContext = ctxRef.current as ExtendedCanvasRenderingContext2D;
     canvasContext.prevMouseX = e.nativeEvent.offsetX;
@@ -58,6 +65,7 @@ function PaintPage() {
 
   const endDrawing = () => {
     ctxRef.current!.closePath();
+    saveCanvasData();
     setIsDrawing(false);
   };
 
@@ -89,15 +97,11 @@ function PaintPage() {
         onHomeButtonClick(navigate);
         break;
       case 'save':
-        saveImg(
-          imageId,
-          userId,
-          canvasRef.current as HTMLCanvasElement,
-          navigate
-        );
+        handleSubmit(onSubmit)(event);
         break;
       case 'clear':
         clearCanvas(ctxRef.current!, canvasRef.current!);
+        saveCanvasData();
         break;
       case 'shape':
         openToolMenu('shape-menu');
@@ -111,10 +115,33 @@ function PaintPage() {
     }
   };
 
+  const onSubmit = (data) => {
+    if (imageId) {
+      set(ref(database, userId + '/pictures/' + imageId), {
+        imageUrl: data.canvas,
+        imageId,
+        name: data.name,
+      });
+    } else {
+      const newImageId = Date.now();
+      set(ref(database, userId + '/pictures/' + `/${newImageId}`), {
+        imageUrl: data.canvas,
+        imageId: newImageId,
+        name: data.name,
+      });
+      navigate(`/paint/${newImageId}`);
+    }
+  };
+
+  const saveCanvasData = () => {
+    const dataURL = canvasRef.current!.toDataURL('image/png');
+    setValue('canvas', dataURL);
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
-    canvas.width = 500;
-    canvas.height = 500;
+    canvas.width = 450;
+    canvas.height = 450;
 
     const ctx = canvas.getContext?.('2d') as ExtendedCanvasRenderingContext2D;
 
@@ -124,6 +151,8 @@ function PaintPage() {
         const img = new Image();
         img.src = data.imageUrl;
         ctx.drawImage(img, 0, 0);
+        setValue('name', data.name);
+        setValue('canvas', data.imageUrl);
       });
     } else {
       ctx.fillStyle = 'white';
@@ -134,7 +163,7 @@ function PaintPage() {
     ctx.lineWidth = lineWidth;
 
     ctxRef.current = ctx;
-  }, [imageId, canvasRef]);
+  }, [canvasRef]);
 
   useEffect(() => {
     ctxRef.current!.strokeStyle = lineColor;
@@ -162,14 +191,38 @@ function PaintPage() {
       </DrawingToolsContext.Provider>
 
       <div className={'paint-page__content'}>
-        <canvas
-          className={'paint-page__canvas'}
-          id={'canvas'}
-          ref={canvasRef}
-          onMouseDown={startDrawing}
-          onMouseUp={endDrawing}
-          onMouseMove={draw}
-        />
+        <form className="drawing-form" onSubmit={handleSubmit(onSubmit)}>
+          <canvas
+            {...register('canvas')}
+            className={'drawing-form__canvas'}
+            id={'canvas'}
+            ref={canvasRef}
+            onMouseDown={startDrawing}
+            onMouseUp={endDrawing}
+            onMouseMove={draw}
+          />
+          <input
+            {...register('name', {
+              required: true,
+              minLength: 1,
+              maxLength: 20,
+              validate: {
+                noSpaces: (value) => {
+                  console.log(value.length);
+                  return (
+                    value.trim().length === value.length ||
+                    'Title cannot begin or end with spaces'
+                  );
+                },
+              },
+            })}
+            className="drawing-form__input"
+            placeholder="Image name"
+          />
+          {errors.name?.message && (
+            <span className="title-error">{errors.name?.message}</span>
+          )}
+        </form>
       </div>
     </div>
   );

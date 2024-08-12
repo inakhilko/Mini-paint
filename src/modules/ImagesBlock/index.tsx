@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Loader from '../../UI/Loader';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../store/hooks/useAuth.ts';
@@ -14,13 +14,7 @@ function ImagesBlock() {
 
   const { userId } = useAuth();
 
-  const navigate = useNavigate();
-
   const imagesArr = useSelector((state) => state.pictures.pictures);
-
-  const openImage = (imageId) => {
-    navigate('/paint/' + imageId);
-  };
 
   useEffect(() => {
     onValue(ref(database, userId + '/pictures'), (snapshot) => {
@@ -46,14 +40,18 @@ function ImagesBlock() {
 
   return imagesArr.map(({ imageUrl, imageId }) => {
     return (
-      <img
-        className="home-page__content-main__image"
-        src={imageUrl}
-        alt="image"
+      <Link
+        to={`/paint/${imageId}`}
         key={imageId}
-        id={imageId}
-        onClick={() => openImage(imageId)}
-      />
+        className="home-page__content-main__link"
+      >
+        <img
+          className="home-page__content-main__link-image"
+          src={imageUrl}
+          alt="image"
+          id={imageId}
+        />
+      </Link>
     );
   });
 }

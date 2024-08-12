@@ -1,5 +1,3 @@
-import { ref, set } from 'firebase/database';
-import { database } from '../../../firebase.ts';
 import { NavigateFunction } from 'react-router-dom';
 
 export const clearCanvas = (
@@ -7,6 +5,8 @@ export const clearCanvas = (
   canvas: HTMLCanvasElement
 ) => {
   context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
 };
 
 export const openToolMenu = (menuId: string) => {
@@ -18,27 +18,30 @@ export const openToolMenu = (menuId: string) => {
   menu.classList.toggle('menu--opened');
 };
 
-export const saveImg = (
-  imageId: string | undefined,
-  userId: string,
-  canvas: HTMLCanvasElement,
-  navigate
-) => {
-  const imageUrl = canvas.toDataURL('image/png');
-  if (imageId) {
-    set(ref(database, userId + '/pictures/' + imageId), {
-      imageUrl: canvas.toDataURL('image/png'),
-      imageId,
-    });
-  } else {
-    const newImageId = Date.now();
-    set(ref(database, userId + '/pictures' + `/${newImageId}`), {
-      imageUrl,
-      imageId: newImageId,
-    });
-    navigate(`/paint/${newImageId}`);
-  }
-};
+// export const saveImg = (
+//   imageId: string | undefined,
+//   userId: string,
+//   canvas: HTMLCanvasElement,
+//   navigate
+// ) => {
+//   const imageUrl = canvas.toDataURL('image/png');
+//   if (imageId) {
+//     set(ref(database, userId + '/pictures/' + imageId), {
+//       imageUrl: canvas.toDataURL('image/png'),
+//       imageId,
+//     });
+//   } else {
+//     const newImageId = Date.now();
+//     set(ref(database, userId + '/pictures' + `/${newImageId}`), {
+//       imageUrl,
+//       imageId: newImageId,
+//     });
+//     const img = new Image();
+//     img.src = imageUrl;
+//     canvas.getContext('2d')?.drawImage(img, 0, 0);
+//     navigate(`/paint/${newImageId}`);
+//   }
+// };
 
 export const onHomeButtonClick = (navigate: NavigateFunction) => {
   navigate('../home');
