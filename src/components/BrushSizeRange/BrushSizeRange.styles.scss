@@ -1,0 +1,22 @@
+.brush-size-range {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  position: absolute;
+  padding: 5px;
+  border-radius: 10px;
+
+  background-color: #fdfdfd;
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+  &__input {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+  }
+
+  &__value {
+    font-size: 0.875rem;
+  }
+}

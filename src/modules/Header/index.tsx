@@ -10,7 +10,7 @@ function Header() {
   const auth = getAuth();
   const onLogoutClick = () => {
     dispatch(removeUser());
-    localStorage.removeItem('paintUser');
+    localStorage.removeItem('miniPaintToolData');
     auth.signOut();
   };
 
