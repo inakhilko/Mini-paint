@@ -23,6 +23,18 @@
         border-bottom: transparent 2px solid;
         border-left: transparent 2px solid;
       }
+
+      &.current-tool {
+        color: #45b017;
+      }
+    }
+
+    &-main,
+    &-shapes {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -32,15 +44,6 @@
     justify-content: center;
 
     flex-grow: 1;
-  }
-
-  &__shapes-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    background-color: #8080801a;
   }
 }
 

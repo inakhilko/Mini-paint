@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 interface BrushSizeRangeProps {
   initialValue: number;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (param: string, value: string) => void;
   onCanvasChange: (value: string) => void;
 }
 
@@ -39,7 +39,7 @@ function BrushSizeRange({
           onChange={(event) => {
             setInputValue(Number(event.target.value));
             onCanvasChange(event.target.value);
-            debouncedOnChange(event);
+            debouncedOnChange('lineWidth', event.target.value);
           }}
         />
         <div className="progress"></div>

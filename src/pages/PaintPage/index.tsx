@@ -1,20 +1,14 @@
 import { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { onValue, ref, set } from 'firebase/database';
 import { database } from '../../firebase.ts';
 import { useAuth } from '../../store/hooks/useAuth.ts';
-import './PaintPage.styles.scss';
-import {
-  drawCircle,
-  drawLine,
-  drawRectangle,
-  drawWithBrush,
-} from './helpers/drawingHelpers.ts';
-import { clearCanvas, onHomeButtonClick } from './helpers/toolbarHelpers.ts';
-
+import { chooseDrawingFunction } from './helpers/drawingHelpers.ts';
+import { clearCanvas } from './helpers/toolbarHelpers.ts';
 import Toolbar from '../../modules/Toolbar';
-import { useForm } from 'react-hook-form';
 import BrushSizeRange from '../../components/BrushSizeRange';
+import './PaintPage.styles.scss';
 
 interface ExtendedCanvasRenderingContext2D extends CanvasRenderingContext2D {
   prevMouseX?: number;
@@ -30,22 +24,10 @@ function PaintPage() {
 
   const canvasRef = useRef<null | HTMLCanvasElement>(null);
   const ctxRef = useRef<null | ExtendedCanvasRenderingContext2D>(null);
-  const localStorageRef = useRef<null | Storage>(
-    JSON.parse(localStorage.getItem('miniPaintToolData'))
-  );
 
   const [isDrawing, setIsDrawing] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const lineWidthParam =
-    searchParams.get('lineWidth') || localStorageRef.current?.lineWidth || 5;
-  const lineColorParam =
-    searchParams.get('lineColor') ||
-    localStorageRef.current?.lineColor ||
-    '#000000';
-  const toolParam =
-    searchParams.get('tool') || localStorageRef.current?.tool || 'brush';
 
   const {
     handleSubmit,
@@ -53,6 +35,19 @@ function PaintPage() {
     formState: { errors },
     setValue,
   } = useForm();
+
+  const lineWidthParam =
+    searchParams.get('lineWidth') ??
+    JSON.parse(localStorage.getItem('miniPaintToolData'))?.lineWidth ??
+    5;
+  const lineColorParam =
+    searchParams.get('lineColor') ??
+    JSON.parse(localStorage.getItem('miniPaintToolData'))?.lineColor ??
+    '#000000';
+  const toolParam =
+    searchParams.get('tool') ??
+    JSON.parse(localStorage.getItem('miniPaintToolData'))?.tool ??
+    'brush';
 
   const startDrawing = (e) => {
     const canvasContext = ctxRef.current as ExtendedCanvasRenderingContext2D;
@@ -71,7 +66,7 @@ function PaintPage() {
 
   const endDrawing = () => {
     ctxRef.current!.closePath();
-    saveCanvasData();
+    // saveCanvasData();
     setIsDrawing(false);
   };
 
@@ -80,30 +75,15 @@ function PaintPage() {
       return;
     }
     ctxRef.current!.putImageData(ctxRef.current!.snapshot, 0, 0);
-    switch (toolParam) {
-      case 'brush':
-        drawWithBrush(e, ctxRef.current);
-        break;
-      case 'rectangle':
-        drawRectangle(e, ctxRef.current);
-        break;
-      case 'circle':
-        drawCircle(e, ctxRef.current);
-        break;
-      case 'line':
-        drawLine(e, ctxRef.current);
-        break;
-    }
+    const draw = chooseDrawingFunction(toolParam);
+    draw(e, ctxRef.current!);
   };
 
   const onToolbarButtonClick: MouseEventHandler<HTMLDivElement> = (event) => {
     const pressedButtonId = event.target?.closest('button').id;
-    console.log(pressedButtonId);
     switch (pressedButtonId) {
-      case 'home':
-        onHomeButtonClick(navigate);
-        break;
       case 'save':
+        saveCanvasData();
         handleSubmit(onSubmit)(event);
         break;
       case 'clear':
@@ -127,7 +107,10 @@ function PaintPage() {
         imageId: newImageId,
         name: data.name,
       });
-      navigate(`/paint/${newImageId}`);
+      navigate({
+        pathname: `/paint/${newImageId}`,
+        search: `?lineWidth=${lineWidthParam}&lineColor=${encodeURIComponent(lineColorParam)}&tool=${toolParam}`,
+      });
     }
   };
 
@@ -136,17 +119,20 @@ function PaintPage() {
     setValue('canvas', dataURL);
   };
 
-  const onRangeChange = (event) => {
-    setSearchParams({
-      lineColor: searchParams.get('lineColor'),
-      tool: searchParams.get('tool'),
-      lineWidth: event.target.value,
-    });
+  const changeSearchParam = (param, value) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(param, value);
+    setSearchParams(newParams);
   };
 
   const setCanvasBrushSize = (value) => {
     const context = ctxRef.current as ExtendedCanvasRenderingContext2D;
     context.lineWidth = value;
+  };
+
+  const setCanvasColor = (value) => {
+    const context = ctxRef.current as ExtendedCanvasRenderingContext2D;
+    context.strokeStyle = value;
   };
 
   useEffect(() => {
@@ -170,7 +156,7 @@ function PaintPage() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     ctx.lineCap = 'round';
-    // ctx.strokeStyle = lineColorParam;
+    ctx.strokeStyle = lineColorParam;
     ctx.lineWidth = Number(lineWidthParam);
 
     ctxRef.current = ctx;
@@ -184,15 +170,7 @@ function PaintPage() {
   }, [canvasRef]);
 
   useEffect(() => {
-    ctxRef.current!.strokeStyle = lineColorParam;
-    if (toolParam !== 'rectangle') {
-      ctxRef.current!.lineJoin = 'round';
-    }
-    if (toolParam === 'rectangle') {
-      ctxRef.current!.lineJoin = 'miter';
-    }
     return () => {
-      console.log('unmount');
       localStorage.setItem(
         'miniPaintToolData',
         JSON.stringify({
@@ -202,19 +180,25 @@ function PaintPage() {
         })
       );
     };
-  }, [lineColorParam, toolParam, lineWidthParam]);
+  }, [lineWidthParam, lineColorParam, toolParam]);
 
   return (
     <div className={'paint-page'}>
       <BrushSizeRange
-        initialValue={lineWidthParam}
-        onChange={onRangeChange}
+        initialValue={Number(lineWidthParam) || 5}
+        onChange={changeSearchParam}
         onCanvasChange={setCanvasBrushSize}
       />
-      <Toolbar onToolbarButtonClick={onToolbarButtonClick} />
+      <Toolbar
+        onToolbarButtonClick={onToolbarButtonClick}
+        toolParam={toolParam}
+        setParams={changeSearchParam}
+        initialColorValue={lineColorParam || '#000000'}
+        setCanvasColor={setCanvasColor}
+      />
 
       <div className={'paint-page__content'}>
-        <form className="drawing-form" onSubmit={handleSubmit(onSubmit)}>
+        <form className="drawing-form">
           <canvas
             {...register('canvas')}
             className={'drawing-form__canvas'}
@@ -231,7 +215,6 @@ function PaintPage() {
               maxLength: 20,
               validate: {
                 noSpaces: (value) => {
-                  console.log(value.length);
                   return (
                     value.trim().length === value.length ||
                     'Title cannot begin or end with spaces'
