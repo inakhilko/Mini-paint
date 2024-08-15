@@ -11,6 +11,7 @@ import DrawingCanvas, {
   ExtendedCanvasRenderingContext2D,
 } from '../../components/DrawingCanvas';
 import './PaintPage.styles.scss';
+import ImageNameInput from '../../components/ImageNameInput';
 
 function PaintPage() {
   const { imageId } = useParams();
@@ -169,24 +170,7 @@ function PaintPage() {
             contextRef={ctxRef}
             initialTool={toolParam}
           />
-
-          <input
-            {...register('name', {
-              required: true,
-              minLength: 1,
-              maxLength: 20,
-              validate: {
-                noSpaces: (value: string) => {
-                  return (
-                    value.trim().length === value.length ||
-                    'Title cannot begin or end with spaces'
-                  );
-                },
-              },
-            })}
-            className="drawing-form__input"
-            placeholder="Image name"
-          />
+          <ImageNameInput register={register}></ImageNameInput>
           {errors.name?.message && (
             <span className="title-error">{errors.name?.message}</span>
           )}
