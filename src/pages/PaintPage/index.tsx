@@ -167,9 +167,6 @@ function PaintPage() {
             register={register}
             canvasRef={canvasRef}
             contextRef={ctxRef}
-            setValue={setValue}
-            initialColor={lineColorParam}
-            initialWidth={Number(lineWidthParam)}
             initialTool={toolParam}
           />
 

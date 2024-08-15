@@ -8,12 +8,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+
+    height: 100vh;
 
     position: relative;
     z-index: 5;
 
     background-color: #fdfdfd;
     box-shadow: 8px 0 8px rgba(0, 0, 0, 0.1);
+
+    &-top-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     .button {
       border-radius: unset;

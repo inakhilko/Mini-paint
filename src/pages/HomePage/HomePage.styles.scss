@@ -35,6 +35,17 @@
 
         cursor: pointer;
 
+        transition: border-color .3s, filter .3s;
+
+        &:hover {
+          border-color: #45b017;
+          filter: brightness(0.9);
+        }
+
+        &:active {
+            border-color: #358d12;
+        }
+
         &-image {
           width: 100%;
           height: 100%;

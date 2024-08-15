@@ -9,7 +9,8 @@ interface ButtonProps extends ComponentProps<'button'> {
 }
 
 function Button(props: ButtonProps) {
-  const { variant, square, children, className, ...otherProps } = props;
+  const { variant, square, disabled, children, className, ...otherProps } =
+    props;
 
   const buttonClasses = classNames([
     'button',
@@ -19,7 +20,12 @@ function Button(props: ButtonProps) {
   ]);
 
   return (
-    <button className={buttonClasses} type={'button'} {...otherProps}>
+    <button
+      className={buttonClasses}
+      type={'button'}
+      disabled={disabled}
+      {...otherProps}
+    >
       {children}
     </button>
   );

@@ -4,10 +4,14 @@ import classNames from 'classnames';
 import { toolbarButtons } from '../../pages/PaintPage/constants/toolbarButtonsData.tsx';
 import shapes from '../../pages/PaintPage/constants/shapesData.tsx';
 import Button from '../../UI/Button';
+import DeleteButton from '../../components/DeleteButton';
 
 interface ToolbarProps {
   onToolbarButtonClick: MouseEventHandler<HTMLDivElement>;
   initialColorValue: string;
+  setCanvasColor: (color: string) => void;
+  toolParam: string;
+  setParams: (param: string, value: string) => void;
 }
 
 function Toolbar({
@@ -35,46 +39,49 @@ function Toolbar({
   return (
     <>
       <div className="paint-page__toolbar">
-        <div
-          className="paint-page__toolbar-main"
-          onClick={onToolbarButtonClick}
-        >
-          {toolbarButtons.map(({ name, children }, index) => {
-            if (index === 0) {
+        <div className="paint-page__toolbar-top-block">
+          <div
+            className="paint-page__toolbar-main"
+            onClick={onToolbarButtonClick}
+          >
+            {toolbarButtons.map(({ name, children }, index) => {
+              if (index === 0) {
+                return (
+                  <Link to="/home">
+                    <Button variant="filled" key={name} id={name}>
+                      {children}
+                    </Button>
+                  </Link>
+                );
+              }
               return (
-                <Link to="/home">
-                  <Button variant="filled" key={name} id={name}>
-                    {children}
-                  </Button>
-                </Link>
+                <Button variant="outlined" key={name} id={name}>
+                  {children}
+                </Button>
               );
-            }
-            return (
-              <Button variant="outlined" key={name} id={name}>
-                {children}
-              </Button>
-            );
-          })}
+            })}
+          </div>
+          <div className="paint-page__toolbar-shapes" onClick={onShapeClick}>
+            {shapes.map(({ shapeSVG, shapeId }) => {
+              return (
+                <Button
+                  variant="outlined"
+                  key={shapeId}
+                  id={shapeId}
+                  className={classNames(tool === shapeId ? 'current-tool' : '')}
+                >
+                  {shapeSVG}
+                </Button>
+              );
+            })}
+          </div>
+          <input
+            type="color"
+            value={color}
+            onChange={(event) => onColorInputChange(event)}
+          />
         </div>
-        <div className="paint-page__toolbar-shapes" onClick={onShapeClick}>
-          {shapes.map(({ shapeSVG, shapeId }) => {
-            return (
-              <Button
-                variant="outlined"
-                key={shapeId}
-                id={shapeId}
-                className={classNames(tool === shapeId ? 'current-tool' : '')}
-              >
-                {shapeSVG}
-              </Button>
-            );
-          })}
-        </div>
-        <input
-          type="color"
-          value={color}
-          onChange={(event) => onColorInputChange(event)}
-        />
+        <DeleteButton />
       </div>
     </>
   );
