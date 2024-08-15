@@ -44,9 +44,9 @@ function SignInForm() {
     <>
       <div className="public-form">
         <h2 className="public-form__title">Sign In</h2>
-        <Form title={'Log In'} handleClick={handleLogIn} />
-        <span className={'public-form__additional-info'}>
-          If you do not have an account <Link to={'/register'}>sign up</Link>
+        <Form title="Log In" handleClick={handleLogIn} />
+        <span className="public-form__additional-info">
+          If you do not have an account <Link to="/register">sign up</Link>
         </span>
       </div>
       <ToastContainer />

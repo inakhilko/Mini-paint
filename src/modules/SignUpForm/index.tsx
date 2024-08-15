@@ -47,11 +47,11 @@ function SignUpForm() {
 
   return (
     <>
-      <div className={'public-form'}>
-        <h2 className={'public-form__title'}>Sign Up</h2>
-        <Form title={'Sign Up'} handleClick={handleRegister} />
-        <span className={'public-form__additional-info'}>
-          If you already have an account <Link to={'/login'}>sign in</Link>
+      <div className="public-form">
+        <h2 className="public-form__title">Sign Up</h2>
+        <Form title="Sign Up" handleClick={handleRegister} />
+        <span className="public-form__additional-info">
+          If you already have an account <Link to="/login">sign in</Link>
         </span>
       </div>
       <ToastContainer />

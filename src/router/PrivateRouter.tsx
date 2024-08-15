@@ -5,9 +5,9 @@ import PaintPage from '../pages/PaintPage';
 function PrivateRouter() {
   return (
     <Routes>
-      <Route path={'home'} element={<HomePage />} />
-      <Route path={'paint'} element={<PaintPage />}>
-        <Route path={':imageId'} element={<PaintPage />} />
+      <Route path="home" element={<HomePage />} />
+      <Route path="paint" element={<PaintPage />}>
+        <Route path=":imageId" element={<PaintPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/home" />} />
     </Routes>

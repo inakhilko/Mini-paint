@@ -24,9 +24,6 @@ function ImageNameInput(props: ImageNameInputProps) {
       const snapshot = await get(nameQuery);
       if (snapshot.exists()) {
         const data = snapshot.val();
-        console.log('imageData: ');
-        console.log('imageId: ', data[imageId]);
-
         return data[imageId] ? true : 'Name already exists';
       } else {
         return true;

@@ -42,15 +42,13 @@ const drawLine = (e, canvasContext) => {
   canvasContext.closePath();
 };
 
+const TOOLS = {
+  brush: drawWithBrush,
+  rectangle: drawRectangle,
+  circle: drawCircle,
+  line: drawLine,
+} as const;
+
 export const chooseDrawingFunction = (tool) => {
-  switch (tool) {
-    case 'brush':
-      return drawWithBrush;
-    case 'rectangle':
-      return drawRectangle;
-    case 'circle':
-      return drawCircle;
-    case 'line':
-      return drawLine;
-  }
+  return TOOLS[tool];
 };

@@ -22,7 +22,7 @@ function Button(props: ButtonProps) {
   return (
     <button
       className={buttonClasses}
-      type={'button'}
+      type="button"
       disabled={disabled}
       {...otherProps}
     >

@@ -1,5 +1,6 @@
 import './BrushSizeRange.styles.scss';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { debounce } from '../../helpers/debounce.ts';
 
 interface BrushSizeRangeProps {
   initialValue: number;
@@ -14,17 +15,7 @@ function BrushSizeRange({
 }: BrushSizeRangeProps) {
   const [inputValue, setInputValue] = useState(initialValue);
 
-  function debounce(func, delay) {
-    let timer;
-    return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func.apply(this, args);
-      }, delay);
-    };
-  }
-
-  const debouncedOnChange = debounce(onChange, 1500);
+  const debouncedOnChange = useCallback(debounce(onChange, 1500), [debounce]);
 
   return (
     <div className="brush-size-range">

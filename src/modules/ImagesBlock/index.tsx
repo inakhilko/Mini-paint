@@ -34,7 +34,7 @@ function ImagesBlock() {
 
   if (!imagesArr.length) {
     return (
-      <div className={'home-page__content-main__message'}>No images yet</div>
+      <div className="home-page__content-main__message">No images yet</div>
     );
   }
 

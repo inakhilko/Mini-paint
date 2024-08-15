@@ -148,7 +148,7 @@ function PaintPage() {
   }, [lineWidthParam, lineColorParam, toolParam]);
 
   return (
-    <div className={'paint-page'}>
+    <div className="paint-page">
       <BrushSizeRange
         initialValue={Number(lineWidthParam) || 5}
         onChange={changeSearchParam}
@@ -162,7 +162,7 @@ function PaintPage() {
         setCanvasColor={setCanvasColor}
       />
 
-      <div className={'paint-page__content'}>
+      <div className="paint-page__content">
         <form className="drawing-form">
           <DrawingCanvas
             register={register}

@@ -57,8 +57,8 @@ function DrawingCanvas(props: DrawingCanvasProps) {
   return (
     <canvas
       {...register('canvas')}
-      className={'drawing-form__canvas'}
-      id={'canvas'}
+      className="drawing-form__canvas"
+      id="canvas"
       ref={canvasRef}
       onMouseDown={startDrawing}
       onMouseUp={endDrawing}
