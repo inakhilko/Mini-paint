@@ -1,20 +1,16 @@
-import { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import { MouseEventHandler, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { onValue, ref, set } from 'firebase/database';
 import { database } from '../../firebase.ts';
 import { useAuth } from '../../store/hooks/useAuth.ts';
-import { chooseDrawingFunction } from './helpers/drawingHelpers.ts';
 import { clearCanvas } from './helpers/toolbarHelpers.ts';
 import Toolbar from '../../modules/Toolbar';
 import BrushSizeRange from '../../components/BrushSizeRange';
+import DrawingCanvas, {
+  ExtendedCanvasRenderingContext2D,
+} from '../../components/DrawingCanvas';
 import './PaintPage.styles.scss';
-
-interface ExtendedCanvasRenderingContext2D extends CanvasRenderingContext2D {
-  prevMouseX?: number;
-  prevMouseY?: number;
-  snapshot: ImageData;
-}
 
 function PaintPage() {
   const { imageId } = useParams();
@@ -24,8 +20,6 @@ function PaintPage() {
 
   const canvasRef = useRef<null | HTMLCanvasElement>(null);
   const ctxRef = useRef<null | ExtendedCanvasRenderingContext2D>(null);
-
-  const [isDrawing, setIsDrawing] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -49,38 +43,8 @@ function PaintPage() {
     JSON.parse(localStorage.getItem('miniPaintToolData'))?.tool ??
     'brush';
 
-  const startDrawing = (e) => {
-    const canvasContext = ctxRef.current as ExtendedCanvasRenderingContext2D;
-    canvasContext.prevMouseX = e.nativeEvent.offsetX;
-    canvasContext.prevMouseY = e.nativeEvent.offsetY;
-    canvasContext.beginPath();
-    canvasContext.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    canvasContext.snapshot = canvasContext.getImageData(
-      0,
-      0,
-      canvasRef.current!.width,
-      canvasRef.current!.height
-    );
-    setIsDrawing(true);
-  };
-
-  const endDrawing = () => {
-    ctxRef.current!.closePath();
-    // saveCanvasData();
-    setIsDrawing(false);
-  };
-
-  const draw = (e) => {
-    if (!isDrawing) {
-      return;
-    }
-    ctxRef.current!.putImageData(ctxRef.current!.snapshot, 0, 0);
-    const draw = chooseDrawingFunction(toolParam);
-    draw(e, ctxRef.current!);
-  };
-
   const onToolbarButtonClick: MouseEventHandler<HTMLDivElement> = (event) => {
-    const pressedButtonId = event.target?.closest('button').id;
+    const pressedButtonId = event.target.closest('button').id;
     switch (pressedButtonId) {
       case 'save':
         saveCanvasData();
@@ -199,22 +163,23 @@ function PaintPage() {
 
       <div className={'paint-page__content'}>
         <form className="drawing-form">
-          <canvas
-            {...register('canvas')}
-            className={'drawing-form__canvas'}
-            id={'canvas'}
-            ref={canvasRef}
-            onMouseDown={startDrawing}
-            onMouseUp={endDrawing}
-            onMouseMove={draw}
+          <DrawingCanvas
+            register={register}
+            canvasRef={canvasRef}
+            contextRef={ctxRef}
+            setValue={setValue}
+            initialColor={lineColorParam}
+            initialWidth={Number(lineWidthParam)}
+            initialTool={toolParam}
           />
+
           <input
             {...register('name', {
               required: true,
               minLength: 1,
               maxLength: 20,
               validate: {
-                noSpaces: (value) => {
+                noSpaces: (value: string) => {
                   return (
                     value.trim().length === value.length ||
                     'Title cannot begin or end with spaces'
