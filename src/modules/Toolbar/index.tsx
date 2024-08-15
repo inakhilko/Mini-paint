@@ -47,8 +47,8 @@ function Toolbar({
             {toolbarButtons.map(({ name, children }, index) => {
               if (index === 0) {
                 return (
-                  <Link to="/home">
-                    <Button variant="filled" key={name} id={name}>
+                  <Link to="/home" key={name}>
+                    <Button variant="filled" id={name}>
                       {children}
                     </Button>
                   </Link>
