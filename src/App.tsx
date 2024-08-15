@@ -23,10 +23,8 @@ function App() {
         dispatch(
           setUser({ email: user.email, token: user.accessToken, id: user.uid })
         );
-        console.log('in');
       } else {
         dispatch(removeUser());
-        console.log('out');
       }
       setLoading(false);
     });

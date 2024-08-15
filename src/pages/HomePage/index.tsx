@@ -5,11 +5,11 @@ import './HomePage.styles.scss';
 
 function HomePage() {
   return (
-    <div className={'home-page'}>
+    <div className="home-page">
       <Header />
-      <div className={'home-page__content'}>
+      <div className="home-page__content">
         <Navigation />
-        <div className={'home-page__content-main'}>
+        <div className="home-page__content-main">
           <ImagesBlock />
         </div>
       </div>

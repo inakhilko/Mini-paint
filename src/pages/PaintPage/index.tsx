@@ -1,30 +1,17 @@
-import { MouseEventHandler, useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { onValue, ref } from 'firebase/database';
+import { MouseEventHandler, useEffect, useRef } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { onValue, ref, set } from 'firebase/database';
 import { database } from '../../firebase.ts';
-import DrawingToolsContext from '../../context/DrawingToolsContext.ts';
 import { useAuth } from '../../store/hooks/useAuth.ts';
-import './PaintPage.styles.scss';
-import {
-  drawCircle,
-  drawLine,
-  drawRectangle,
-  drawWithBrush,
-} from './helpers/drawingHelpers.ts';
-import {
-  clearCanvas,
-  onHomeButtonClick,
-  openToolMenu,
-  saveImg,
-} from './helpers/toolbarHelpers.ts';
-
+import { clearCanvas } from './helpers/toolbarHelpers.ts';
 import Toolbar from '../../modules/Toolbar';
-
-interface ExtendedCanvasRenderingContext2D extends CanvasRenderingContext2D {
-  prevMouseX?: number;
-  prevMouseY?: number;
-  snapshot: ImageData;
-}
+import BrushSizeRange from '../../components/BrushSizeRange';
+import DrawingCanvas, {
+  ExtendedCanvasRenderingContext2D,
+} from '../../components/DrawingCanvas';
+import './PaintPage.styles.scss';
+import ImageNameInput from '../../components/ImageNameInput';
 
 function PaintPage() {
   const { imageId } = useParams();
@@ -35,86 +22,88 @@ function PaintPage() {
   const canvasRef = useRef<null | HTMLCanvasElement>(null);
   const ctxRef = useRef<null | ExtendedCanvasRenderingContext2D>(null);
 
-  const [lineWidth, setLineWidth] = useState(5);
-  const [lineColor, setLineColor] = useState('#000000');
-  const [tool, setTool] = useState('brush');
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [isDrawing, setIsDrawing] = useState(false);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    setValue,
+  } = useForm();
 
-  const startDrawing = (e) => {
-    const canvasContext = ctxRef.current as ExtendedCanvasRenderingContext2D;
-    canvasContext.prevMouseX = e.nativeEvent.offsetX;
-    canvasContext.prevMouseY = e.nativeEvent.offsetY;
-    canvasContext.beginPath();
-    canvasContext.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    canvasContext.snapshot = canvasContext.getImageData(
-      0,
-      0,
-      canvasRef.current!.width,
-      canvasRef.current!.height
-    );
-    setIsDrawing(true);
-  };
-
-  const endDrawing = () => {
-    ctxRef.current!.closePath();
-    setIsDrawing(false);
-  };
-
-  const draw = (e) => {
-    if (!isDrawing) {
-      return;
-    }
-    ctxRef.current!.putImageData(ctxRef.current!.snapshot, 0, 0);
-    switch (tool) {
-      case 'brush':
-        drawWithBrush(e, ctxRef.current);
-        break;
-      case 'rectangle':
-        drawRectangle(e, ctxRef.current);
-        break;
-      case 'circle':
-        drawCircle(e, ctxRef.current);
-        break;
-      case 'line':
-        drawLine(e, ctxRef.current);
-        break;
-    }
-  };
+  const lineWidthParam =
+    searchParams.get('lineWidth') ??
+    JSON.parse(localStorage.getItem('miniPaintToolData'))?.lineWidth ??
+    5;
+  const lineColorParam =
+    searchParams.get('lineColor') ??
+    JSON.parse(localStorage.getItem('miniPaintToolData'))?.lineColor ??
+    '#000000';
+  const toolParam =
+    searchParams.get('tool') ??
+    JSON.parse(localStorage.getItem('miniPaintToolData'))?.tool ??
+    'brush';
 
   const onToolbarButtonClick: MouseEventHandler<HTMLDivElement> = (event) => {
     const pressedButtonId = event.target.closest('button').id;
     switch (pressedButtonId) {
-      case 'home':
-        onHomeButtonClick(navigate);
-        break;
       case 'save':
-        saveImg(
-          imageId,
-          userId,
-          canvasRef.current as HTMLCanvasElement,
-          navigate
-        );
+        saveCanvasData();
+        handleSubmit(onSubmit)(event);
         break;
       case 'clear':
         clearCanvas(ctxRef.current!, canvasRef.current!);
-        break;
-      case 'shape':
-        openToolMenu('shape-menu');
-        break;
-      case 'brush-color':
-        openToolMenu('brush-color-menu');
-        break;
-      case 'brush-size':
-        openToolMenu('brush-size-menu');
+        saveCanvasData();
         break;
     }
   };
 
+  const onSubmit = (data) => {
+    if (imageId) {
+      set(ref(database, userId + '/pictures/' + imageId), {
+        imageUrl: data.canvas,
+        imageId,
+        name: data.name,
+      });
+    } else {
+      const newImageId = Date.now();
+      set(ref(database, userId + '/pictures/' + `/${newImageId}`), {
+        imageUrl: data.canvas,
+        imageId: newImageId,
+        name: data.name,
+      });
+      navigate({
+        pathname: `/paint/${newImageId}`,
+        search: `?lineWidth=${lineWidthParam}&lineColor=${encodeURIComponent(lineColorParam)}&tool=${toolParam}`,
+      });
+    }
+  };
+
+  const saveCanvasData = () => {
+    const dataURL = canvasRef.current!.toDataURL('image/png');
+    setValue('canvas', dataURL);
+  };
+
+  const changeSearchParam = (param, value) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(param, value);
+    setSearchParams(newParams);
+  };
+
+  const setCanvasBrushSize = (value) => {
+    const context = ctxRef.current as ExtendedCanvasRenderingContext2D;
+    context.lineWidth = value;
+  };
+
+  const setCanvasColor = (value) => {
+    const context = ctxRef.current as ExtendedCanvasRenderingContext2D;
+    context.strokeStyle = value;
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
-    canvas.width = 500;
-    canvas.height = 500;
+    canvas.width = 450;
+    canvas.height = 450;
 
     const ctx = canvas.getContext?.('2d') as ExtendedCanvasRenderingContext2D;
 
@@ -124,52 +113,68 @@ function PaintPage() {
         const img = new Image();
         img.src = data.imageUrl;
         ctx.drawImage(img, 0, 0);
+        setValue('name', data.name);
+        setValue('canvas', data.imageUrl);
       });
     } else {
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     ctx.lineCap = 'round';
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = lineColorParam;
+    ctx.lineWidth = Number(lineWidthParam);
 
     ctxRef.current = ctx;
-  }, [imageId, canvasRef]);
+
+    if (localStorage.getItem('miniPaintToolData')) {
+      const { lineWidth, lineColor, tool } = JSON.parse(
+        localStorage.getItem('miniPaintToolData')
+      );
+      setSearchParams({ lineWidth, lineColor, tool });
+    }
+  }, [canvasRef]);
 
   useEffect(() => {
-    ctxRef.current!.strokeStyle = lineColor;
-    ctxRef.current!.lineWidth = lineWidth;
-    if (tool !== 'rectangle') {
-      ctxRef.current!.lineJoin = 'round';
-    }
-    if (tool === 'rectangle') {
-      ctxRef.current!.lineJoin = 'miter';
-    }
-  }, [lineColor, lineWidth, tool]);
+    return () => {
+      localStorage.setItem(
+        'miniPaintToolData',
+        JSON.stringify({
+          lineWidth: lineWidthParam,
+          lineColor: lineColorParam,
+          tool: toolParam,
+        })
+      );
+    };
+  }, [lineWidthParam, lineColorParam, toolParam]);
 
   return (
-    <div className={'paint-page'}>
-      <DrawingToolsContext.Provider
-        value={{
-          lineWidth,
-          lineColor,
-          changeTool: setTool,
-          changeLineWidth: setLineWidth,
-          changeLineColor: setLineColor,
-        }}
-      >
-        <Toolbar onToolbarButtonClick={onToolbarButtonClick} />
-      </DrawingToolsContext.Provider>
+    <div className="paint-page">
+      <BrushSizeRange
+        initialValue={Number(lineWidthParam) || 5}
+        onChange={changeSearchParam}
+        onCanvasChange={setCanvasBrushSize}
+      />
+      <Toolbar
+        onToolbarButtonClick={onToolbarButtonClick}
+        toolParam={toolParam}
+        setParams={changeSearchParam}
+        initialColorValue={lineColorParam || '#000000'}
+        setCanvasColor={setCanvasColor}
+      />
 
-      <div className={'paint-page__content'}>
-        <canvas
-          className={'paint-page__canvas'}
-          id={'canvas'}
-          ref={canvasRef}
-          onMouseDown={startDrawing}
-          onMouseUp={endDrawing}
-          onMouseMove={draw}
-        />
+      <div className="paint-page__content">
+        <form className="drawing-form">
+          <DrawingCanvas
+            register={register}
+            canvasRef={canvasRef}
+            contextRef={ctxRef}
+            initialTool={toolParam}
+          />
+          <ImageNameInput register={register}></ImageNameInput>
+          {errors.name?.message && (
+            <span className="title-error">{errors.name?.message}</span>
+          )}
+        </form>
       </div>
     </div>
   );

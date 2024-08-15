@@ -9,15 +9,16 @@ The description of the task and instructions for its performance can be found [H
 ## Project Structure
 
 The Project is structured as follows:
-* src/
-  * _pages/_: Page components (e.g., HomePage)
-  * _modules/_: Feature-specific modules (e.g., SignInForm, SignUpForm)
-  * _components/_: Reusable components
-  * _UI/_: UI components (e.g., Loader)
-  * _router/_: Routing components (e.g., PublicRouter, PrivateRouter)
-  * _store/_: Redux store and slices
-  * _App.tsx_: Main application component
-  * _index.tsx_: Entry point
+
+- src/
+  - _pages/_: Page components (e.g., HomePage)
+  - _modules/_: Feature-specific modules (e.g., SignInForm, SignUpForm)
+  - _components/_: Reusable components
+  - _UI/_: UI components (e.g., Loader)
+  - _router/_: Routing components (e.g., PublicRouter, PrivateRouter)
+  - _store/_: Redux store and slices
+  - _App.tsx_: Main application component
+  - _index.tsx_: Entry point
 
 ## Application stack
 
@@ -28,8 +29,8 @@ The application uses the following technologies. The application is written with
 1. Clone the repository:
    ```bash
    git clone https://github.com/inakhilko/Mini-paint
-   cd mini-paint 
-   npm install 
+   cd mini-paint
+   npm install
    ```
 2. Create a .env file in the root directory and add your Firebase configuration as follows:
 
@@ -44,14 +45,15 @@ VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 VITE_FIREBASE_DATABASE_URL=your_database_url
 </pre>
 
-3. To start the development server:  ```npm run dev```
+3. To start the development server: `npm run dev`
 
 ## Database snapshot
 
 The structure of the Firebase Realtime Database for the Mini-Paint application is organized as follows:
-* Root
-  * userId
-    * pictures
-      * pictureId
-        * imageUrl: URL of the image
-        * imageId: Unique identifier for the image
+
+- Root
+  - userId
+    - pictures
+      - pictureId
+        - imageUrl: URL of the image
+        - imageId: Unique identifier for the image

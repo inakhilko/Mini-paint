@@ -1,24 +1,31 @@
 import './Button.styles.scss';
 import { ComponentProps } from 'react';
+import classNames from 'classnames';
 
 interface ButtonProps extends ComponentProps<'button'> {
   variant?: 'filled' | 'outlined';
   square?: boolean;
+  className?: string;
 }
 
 function Button(props: ButtonProps) {
-  const { variant, square, children, ...otherProps } = props;
+  const { variant, square, disabled, children, className, ...otherProps } =
+    props;
 
-  const buttonClasses = [
+  const buttonClasses = classNames([
     'button',
     `button--${variant}`,
     square && 'button--square',
-  ]
-    .filter(Boolean)
-    .join(' ');
+    className,
+  ]);
 
   return (
-    <button className={buttonClasses} type={'button'} {...otherProps}>
+    <button
+      className={buttonClasses}
+      type="button"
+      disabled={disabled}
+      {...otherProps}
+    >
       {children}
     </button>
   );

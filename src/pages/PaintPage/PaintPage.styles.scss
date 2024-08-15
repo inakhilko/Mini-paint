@@ -7,12 +7,23 @@
   &__toolbar {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    height: 100vh;
 
     position: relative;
     z-index: 5;
 
     background-color: #fdfdfd;
     box-shadow: 8px 0 8px rgba(0, 0, 0, 0.1);
+
+    &-top-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     .button {
       border-radius: unset;
@@ -23,9 +34,17 @@
         border-left: transparent 2px solid;
       }
 
-      &:first-child {
-        border-bottom: 2px solid #45b017;
+      &.current-tool {
+        color: #45b017;
       }
+    }
+
+    &-main,
+    &-shapes {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -36,11 +55,35 @@
 
     flex-grow: 1;
   }
+}
+
+.drawing-form {
+  display: flex;
+  flex-direction: column;
 
   &__canvas {
+    margin-bottom: 15px;
     border: #cccccc 2px solid;
     background-color: #fdfdfd;
+    box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.1);
   }
+
+  &__input {
+    width: 100%;
+    padding: 10px;
+
+    margin-bottom: 6px;
+    border: none;
+    border-radius: 15px;
+
+    box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .title-error {
+    padding-left: 10px;
+    color: red;
+    font-size: 0.75rem;
+   }
 }
 
 .menu {
@@ -106,4 +149,14 @@
   justify-content: flex-start;
   align-items: center;
   gap: 20px;
+}
+
+.brush-size-range {
+  top: calc(50% - 85px);
+  right: 20px;
+}
+
+input[type="color"] {
+  background-color: transparent;
+  border: none;
 }

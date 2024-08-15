@@ -1,8 +1,10 @@
-export const drawWithBrush = (e, canvasContext) => {
+const drawWithBrush = (e, canvasContext) => {
+  canvasContext.lineJoin = 'round';
   canvasContext.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   canvasContext.stroke();
 };
-export const drawRectangle = (e, canvasContext) => {
+const drawRectangle = (e, canvasContext) => {
+  canvasContext.lineJoin = 'miter';
   const x = e.nativeEvent.offsetX;
   const y = e.nativeEvent.offsetY;
 
@@ -14,7 +16,8 @@ export const drawRectangle = (e, canvasContext) => {
   );
 };
 
-export const drawCircle = (e, canvasContext) => {
+const drawCircle = (e, canvasContext) => {
+  canvasContext.lineJoin = 'round';
   canvasContext.beginPath();
   const radius = Math.sqrt(
     Math.pow(canvasContext.prevMouseX - e.nativeEvent.offsetX, 2) +
@@ -30,10 +33,22 @@ export const drawCircle = (e, canvasContext) => {
   canvasContext.stroke();
 };
 
-export const drawLine = (e, canvasContext) => {
+const drawLine = (e, canvasContext) => {
+  canvasContext.lineJoin = 'round';
   canvasContext.beginPath();
   canvasContext.moveTo(canvasContext.prevMouseX, canvasContext.prevMouseY);
   canvasContext.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   canvasContext.stroke();
   canvasContext.closePath();
+};
+
+const TOOLS = {
+  brush: drawWithBrush,
+  rectangle: drawRectangle,
+  circle: drawCircle,
+  line: drawLine,
+} as const;
+
+export const chooseDrawingFunction = (tool) => {
+  return TOOLS[tool];
 };
